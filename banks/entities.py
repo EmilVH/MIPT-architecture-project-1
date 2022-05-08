@@ -40,7 +40,7 @@ class Bank:
         self.unique_id_generator = banks.utils.UniqueIdGeneratorSingleton()
         # self.bank_manager = None
         self.bank_account = banks.accounts.UtilityAccount(self.unique_id_generator.generate_new_unique_id(), self)
-        # self.cash_account = banks.accounts.UtilityAccount(self.unique_id_generator.generate_new_unique_id(), self)
+        # self.cash_account = bank .accounts.UtilityAccount(self.unique_id_generator.generate_new_unique_id(), self)
         self.all_accounts[self.bank_account.account_id] = self.bank_account
         # self.all_accounts[self.cash_account.account_id] = self.`
         # self.clients_accounts[None].append(self.bank_account)

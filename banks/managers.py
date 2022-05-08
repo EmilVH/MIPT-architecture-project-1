@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import List, Dict
 
 import banks.entities
@@ -39,10 +39,22 @@ class BankManager:
 
 
 class RecalculationManager:
-    def __init__(self):
-        self.bank_manager = None
+    def __init__(self, bank_manager: BankManager):
+        self.bank_manager = bank_manager
         self.time_controller = TimeController()
-    def next_day(self):
 
+    def next_day(self):
+        prev_time = self.time_controller.get_curr_time()
+        recal_time = datetime(year=prev_time.year, month=prev_time.month, day=prev_time.day, hour=23, minute=59,
+                              second=59)
+        self.time_controller.set_time(recal_time)
+        self.bank_manager.start_day_recalculation()
+        self.time_controller.set_time(prev_time + timedelta(days=1))
+
+    def prev_day(self):
+        prev_time = self.time_controller.get_curr_time()
+        new_time = prev_time - timedelta(days=1)
+        self.bank_manager.start_day_recalculation()
+        self.time_controller.set_time(prev_time - timedelta(days=1))
     def skip_to_date(self, to_date: date):
         pass
