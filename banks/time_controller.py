@@ -1,12 +1,12 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from utils import Singleton
+import banks.utils
 
 
-class TimeController(metaclass=Singleton):
+class TimeController(metaclass=banks.utils.Singleton):
     def __init__(self):
-        self.curr_time_: Optional[datetime] = None
+        self.curr_time_: Optional[datetime] = datetime.now()
 
     def get_curr_time(self):
         return self.curr_time_

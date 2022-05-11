@@ -1,4 +1,8 @@
 import enum
+from datetime import datetime
+from typing import Optional
+
+from banks.time_controller import get_time
 
 
 class Transaction:
@@ -12,9 +16,11 @@ class Transaction:
         self.account_to_id = account_to_id
         self.forced = forced
         self.state = TransactionState.UNEXECUTED
+        self.creation_time: datetime  = get_time()
+        self.execution_time: Optional[datetime] = None
 
 
-class TransactionState(enum):
+class TransactionState(enum.Enum):
     UNEXECUTED = 0
     EXECUTED = 1
     CANCELLED = 2

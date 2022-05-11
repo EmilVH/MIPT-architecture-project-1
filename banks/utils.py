@@ -1,3 +1,7 @@
+from typing import Optional
+
+
+
 class Singleton(type):
     _instances = {}
 
@@ -8,45 +12,20 @@ class Singleton(type):
 
 
 class Address:
-    def __init__(self):
-        self.street = None
-        self.city = None
-        self.region = None
-        self.postal_code = None
-        self.country = None
+    def __init__(self, street: Optional[str] = None, city: Optional[str] = None, region: Optional[str] = None,
+                 postal_code: Optional[int] = None, country: Optional[str] = None):
+        self.street = street
+        self.city = city
+        self.region = region
+        self.postal_code = postal_code
+        self.country = country
 
     def validate(self) -> bool:
-        pass
-
-
-class ATM:
-    def __init__(self):
-        self.bank = None
-        self.current_user = None
-
-    def add_cash(self):
-        pass
-
-    def get_cash(self):
-        pass
-
-    def register_client(self):
-        pass
-
-    def login(self):
-        pass
-
-    def add_address(self):
-        pass
-
-    def add_id_number(self):
-        pass
-
-    def show_account(self):
-        pass
-
-    def end_session(self):
-        pass
+        if self.street is not None and self.city is not None and self.region is not None and \
+                self.postal_code is not None and self.country is not None:
+            return True
+        else:
+            return False
 
 
 class UniqueIdGeneratorSingleton(metaclass=Singleton):
