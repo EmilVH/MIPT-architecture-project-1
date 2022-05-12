@@ -85,6 +85,8 @@ class TestRecalculation1day(SimpleSetup):
     def test_1_day_recalc(self):
         self.recalculation_manager.next_day()
         self.assertEqual(self.debit_account_1.balance, 10002)
+        self.assertEqual(-600, self.credit_account_1.balance)
+        self.assertEqual(600328, self.deposit_account_1.balance)
 
 
 class TestLongRecalculation(SimpleSetup):
@@ -92,7 +94,29 @@ class TestLongRecalculation(SimpleSetup):
         self.recalculation_manager.skip_to_date((get_time() + timedelta(days=365)).date())
         self.assertEqual(self.debit_account_1.balance, 10730)
         self.assertEqual(self.credit_account_1.balance, -37000)
-        self.assertEqual(self.deposit_account_1.balance,732598)
+        self.assertEqual(self.deposit_account_1.balance, 732598)
+
+
+class TestTimeSkipping1(SimpleSetup):
+    def test_1_year_forward_and_back(self):
+        self.recalculation_manager.skip_to_date((get_time() + timedelta(days=365)).date())
+        self.assertEqual(self.debit_account_1.balance, 10730)
+        self.assertEqual(self.credit_account_1.balance, -37000)
+        self.assertEqual(self.deposit_account_1.balance, 732598)
+        self.recalculation_manager.skip_to_date((get_time() - timedelta(days=365)).date())
+        self.assertEqual(self.debit_account_1.balance, 10000)
+        self.assertEqual(self.deposit_account_1.balance, 600000)
+        self.assertEqual(self.credit_account_1.balance, -500)
+class TestTimeSkipping2(SimpleSetup):
+    def test_1_day_forward_and_back(self):
+        self.recalculation_manager.skip_to_date((get_time() + timedelta(days=1)).date())
+        self.assertEqual(self.debit_account_1.balance, 10002)
+        self.assertEqual(-600, self.credit_account_1.balance)
+        self.assertEqual(600328, self.deposit_account_1.balance)
+        self.recalculation_manager.skip_to_date((get_time() - timedelta(days=1)).date())
+        self.assertEqual(self.debit_account_1.balance, 10000)
+        self.assertEqual(self.deposit_account_1.balance, 600000)
+        self.assertEqual(self.credit_account_1.balance, -500)
 
 if __name__ == '__main__':
     unittest.main()

@@ -79,6 +79,7 @@ class CreditAccount(Account):
     def subtract_money(self, amount: int, forced: bool) -> bool:
         if forced:
             self.balance -= amount
+            return True
         else:
             if self.balance + self.limit >= amount:
                 self.balance -= amount

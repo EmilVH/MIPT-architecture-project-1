@@ -3,6 +3,7 @@ from typing import Optional
 import banks.entities
 import banks.managers
 
+
 class ATM:
     def __init__(self, bank_manager: banks.managers.BankManager, bank: banks.entities.Bank):
         self.bank_manager = bank_manager
@@ -44,4 +45,24 @@ class ATM:
 
     def end_session(self):
         pass
+
+    def _get_user_selection(self, selection: dict):
+        order = dict()
+        num = 0
+        promt = "Enter your choise:\n"
+        for key, name in selection:
+            num += 1
+            order[num] = key
+            promt += "{}) name\n".format(num)
+        entered = False
+        while not entered:
+            try:
+                res = input(promt)
+                res_val = int(res)
+                if res_val in order:
+                    print('Error, enter again')
+                    entered = True
+            except:
+                print('Error, enter again')
+        return selection[order[res_val]]
 

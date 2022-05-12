@@ -3,7 +3,7 @@ from typing import List, Dict
 
 import banks.entities
 from banks.core import Transaction, TransactionState
-from banks.time_controller import TimeController
+from banks.time_controller import TimeController, get_time
 
 
 class BankManager:
@@ -14,8 +14,17 @@ class BankManager:
         self.recalculation_manager = RecalculationManager(self)
 
     def execute_transaction(self, transaction: Transaction):
+        if transaction.state is not TransactionState.UNEXECUTED:
+            transaction.state = TransactionState.CANCELLED
+            self.cancelled_transaction_history.append(transaction)
+            return False
         account_from = self.all_banks[transaction.bank_from_id].get_account(transaction.account_from_id)
         account_to = self.all_banks[transaction.bank_to_id].get_account(transaction.account_to_id)
+        if (account_from.owner is not None and not account_from.owner.is_verified) or (
+                account_to.owner is not None and not account_to.owner.is_verified):
+            transaction.state = TransactionState.CANCELLED
+            self.cancelled_transaction_history.append(transaction)
+            return False
         res = account_from.subtract_money(transaction.amount, forced=transaction.forced)
         if res:
             account_to.add_money(transaction.amount)
@@ -24,6 +33,7 @@ class BankManager:
             self.cancelled_transaction_history.append(transaction)
             return False
         transaction.state = TransactionState.EXECUTED
+        transaction.execution_time = get_time()
         self.executed_transaction_history.append(transaction)
         return True
 
@@ -33,6 +43,8 @@ class BankManager:
         return new_bank
 
     def cancel_transaction(self, transaction: Transaction):
+        if transaction.state is not TransactionState.EXECUTED:
+            return False
         account_to = self.all_banks[transaction.bank_from_id].get_account(transaction.account_from_id)
         account_from = self.all_banks[transaction.bank_to_id].get_account(transaction.account_to_id)
         account_from.subtract_money(transaction.amount, forced=True)
